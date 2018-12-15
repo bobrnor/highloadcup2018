@@ -15,6 +15,6 @@ func New(accounts Accounts) *Storage {
 	}
 }
 
-func (s *Storage) Fetch(filters []filtering.FieldFilter, limit int) ([]filtering.Account, error) {
+func (s *Storage) Fetch(filters []filtering.Filter, limit int) ([]filtering.Account, error) {
 	return nil, errors.New("not implemented yet")
 }

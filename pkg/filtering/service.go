@@ -1,11 +1,11 @@
 package filtering
 
 type Repository interface {
-	Fetch(filters []FieldFilter, limit int) ([]Account, error)
+	Fetch(filters []Filter, limit int) ([]Account, error)
 }
 
 type Service interface {
-	Fetch(filters []FieldFilter, limit int) ([]Account, error)
+	Fetch(filters []Filter, limit int) ([]Account, error)
 }
 
 type service struct {
@@ -18,6 +18,6 @@ func New(r Repository) Service {
 	}
 }
 
-func (s *service) Fetch(filters []FieldFilter, limit int) ([]Account, error) {
+func (s *service) Fetch(filters []Filter, limit int) ([]Account, error) {
 	return s.repo.Fetch(filters, limit)
 }

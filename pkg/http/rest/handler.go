@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/julienschmidt/httprouter"
 
@@ -30,7 +29,7 @@ func filter(f filtering.Service) func(w http.ResponseWriter, r *http.Request, _ 
 		}
 
 		var limit int
-		var filters []filtering.FieldFilter
+		var filters []filtering.Filter
 		for key, value := range r.Form {
 			if key == "limit" {
 				l, err := strconv.Atoi(value[0])
@@ -41,16 +40,12 @@ func filter(f filtering.Service) func(w http.ResponseWriter, r *http.Request, _ 
 				continue
 			}
 
-			parts := strings.Split(key, "_")
-			if len(parts) != 2 {
-				panic("bad key")
+			filter, err := filtering.Make(key, value[0])
+			if err != nil {
+				panic(err.Error())
 			}
 
-			filters = append(filters, filtering.FieldFilter{
-				Field:     parts[0],
-				Operation: parts[1],
-				Value:     value[0],
-			})
+			filters = append(filters, filter)
 		}
 
 		accounts, err := f.Fetch(filters, limit)
