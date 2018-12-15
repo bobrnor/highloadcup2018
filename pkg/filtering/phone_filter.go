@@ -36,5 +36,7 @@ func (f phoneFilter) Test(account account.Account) error {
 }
 
 func (f phoneFilter) Fill(src account.Account, dst map[string]interface{}) {
-	dst["phone"] = src.Phone
+	if src.Phone != nil {
+		dst["phone"] = src.Phone
+	}
 }

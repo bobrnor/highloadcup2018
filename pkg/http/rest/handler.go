@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/pkg/errors"
+
 	"github.com/julienschmidt/httprouter"
 
 	"github.com/bobrnor/highloadcup2018/pkg/filtering"
@@ -24,6 +26,8 @@ func New(f filtering.Service) http.Handler {
 
 func filter(f filtering.Service) func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		w.Header().Add("Content-Type", "application/json")
+
 		if err := r.ParseForm(); err != nil {
 			panic("can't parse form")
 		}
@@ -38,14 +42,18 @@ func filter(f filtering.Service) func(w http.ResponseWriter, r *http.Request, _ 
 			if key == "limit" {
 				l, err := strconv.Atoi(value[0])
 				if err != nil {
-					panic("bad limit")
+					w.WriteHeader(http.StatusBadRequest)
+					return
 				}
 				limit = l
 				continue
 			}
 
 			filter, err := filtering.Make(key, value[0])
-			if err != nil {
+			if errors.Cause(err) == filtering.ErrFilterNotFount {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			} else if err != nil {
 				panic(err.Error())
 			}
 
@@ -74,7 +82,14 @@ func filter(f filtering.Service) func(w http.ResponseWriter, r *http.Request, _ 
 			resp.Accounts = append(resp.Accounts, accountMap)
 		}
 
-		if err := json.NewEncoder(w).Encode(resp); err != nil {
+		bb, err := json.Marshal(resp)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		w.Header().Add("Content-Length", strconv.Itoa(len(bb)))
+
+		if _, err := w.Write(bb); err != nil {
 			panic(err.Error())
 		}
 	}

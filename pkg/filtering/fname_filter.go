@@ -68,5 +68,7 @@ func (f fnameAnyFilter) Test(account account.Account) error {
 }
 
 func (f fnameAnyFilter) Fill(src account.Account, dst map[string]interface{}) {
-	dst["fname"] = src.Fname
+	if src.Fname != nil {
+		dst["fname"] = src.Fname
+	}
 }

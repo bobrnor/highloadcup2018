@@ -56,5 +56,7 @@ func (f interestsFilter) Test(account account.Account) error {
 }
 
 func (f interestsFilter) Fill(src account.Account, dst map[string]interface{}) {
-	dst["interests"] = src.Interests
+	if len(src.Interests) > 0 {
+		dst["interests"] = src.Interests
+	}
 }

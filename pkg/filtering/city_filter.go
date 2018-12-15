@@ -71,5 +71,7 @@ func (f cityAnyFilter) Test(account account.Account) error {
 }
 
 func (f cityAnyFilter) Fill(src account.Account, dst map[string]interface{}) {
-	dst["city"] = src.City
+	if src.City != nil {
+		dst["city"] = src.City
+	}
 }

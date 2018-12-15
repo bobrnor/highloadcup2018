@@ -28,7 +28,7 @@ func (f emailFilter) Test(account account.Account) error {
 		if strings.Compare(account.Email, f.value) < 0 {
 			return nil
 		}
-	case "dt":
+	case "gt":
 		if strings.Compare(account.Email, f.value) > 0 {
 			return nil
 		}

@@ -36,5 +36,7 @@ func (f countryFilter) Test(account account.Account) error {
 }
 
 func (f countryFilter) Fill(src account.Account, dst map[string]interface{}) {
-	dst["country"] = src.Country
+	if src.Country != nil {
+		dst["country"] = src.Country
+	}
 }

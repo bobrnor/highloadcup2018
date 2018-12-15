@@ -1,9 +1,10 @@
 FROM golang:alpine
 
-WORKDIR /go/src/app
+ENV DATA_PATH /data
+
+WORKDIR /go/src/github.com/bobrnor/highloadcup2018
 COPY . .
 
-RUN go get -d -v ./...
 RUN go install -v ./...
 
 EXPOSE 80

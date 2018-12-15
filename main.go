@@ -110,9 +110,12 @@ func parseData() {
 			return err
 		}
 
-		if err := json.NewDecoder(f).Decode(&accounts); err != nil {
+		var acc account.Accounts
+		if err := json.NewDecoder(f).Decode(&acc); err != nil {
 			return err
 		}
+
+		accounts.Accounts = append(accounts.Accounts, acc.Accounts...)
 
 		return nil
 	})

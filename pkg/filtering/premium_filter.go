@@ -36,5 +36,7 @@ func (f premiumFilter) Test(account account.Account) error {
 }
 
 func (f premiumFilter) Fill(src account.Account, dst map[string]interface{}) {
-	dst["premium"] = src.Premium
+	if src.Premium != nil {
+		dst["premium"] = src.Premium
+	}
 }

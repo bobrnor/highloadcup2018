@@ -1,4 +1,4 @@
 set -e
 
 ./unzip.sh
-app
+highloadcup2018

@@ -11,6 +11,7 @@ import (
 
 type filterMakeFunc func(string, string) (Filter, error)
 
+var ErrFilterNotFount = fmt.Errorf("filter not found")
 var ErrTestFailed = fmt.Errorf("filter test failed")
 
 type Filter interface {
@@ -88,7 +89,7 @@ func Make(key, value string) (Filter, error) {
 
 	f, ok := filterMakeFuncs[field][operation]
 	if !ok {
-		return noFilter{}, errors.New("filter not found")
+		return noFilter{}, errors.WithStack(ErrFilterNotFount)
 	}
 
 	return f(operation, value)
