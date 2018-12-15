@@ -8,4 +8,4 @@ RUN go install -v ./...
 
 EXPOSE 80
 
-CMD ["app"]
+CMD ["sh", "run.sh"]
