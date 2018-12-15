@@ -15,6 +15,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bobrnor/highloadcup2018/pkg/account"
+
 	"github.com/bobrnor/highloadcup2018/pkg/filtering"
 
 	"github.com/bobrnor/highloadcup2018/pkg/http/rest"
@@ -25,7 +27,7 @@ import (
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to `file`")
 var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
 
-var accounts inmemory.Accounts
+var accounts account.Accounts
 
 func main() {
 	log.Println("Hello, highload cup!")

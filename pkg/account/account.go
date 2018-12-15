@@ -1,4 +1,4 @@
-package inmemory
+package account
 
 type Premium struct {
 	Start  int64 `json:"start"`
@@ -23,7 +23,7 @@ type Account struct {
 	Joined    int64    `json:"joined"`
 	Status    string   `json:"status"`
 	Interests []string `json:"interests"`
-	Premium   Premium  `json:"premium"`
+	Premium   *Premium `json:"premium"`
 	Likes     []Likes  `json:"likes"`
 }
 

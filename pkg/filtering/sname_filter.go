@@ -1,15 +1,40 @@
 package filtering
 
+import (
+	"strings"
+
+	"github.com/bobrnor/highloadcup2018/pkg/account"
+)
+
 type snameFilter struct {
-	Field     string
-	Operation string
-	Value     string
+	operation string
+	value     string
 }
 
-func makeSnameFilter(field, operation, value string) (Filter, error) {
+func makeSnameFilter(operation, value string) (Filter, error) {
 	return snameFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     value,
+		operation: operation,
+		value:     value,
 	}, nil
+}
+
+func (f snameFilter) Test(account account.Account) error {
+	switch f.operation {
+	case "eq":
+		if account.Sname != nil && strings.EqualFold(*account.Sname, f.value) {
+			return nil
+		}
+	case "starts":
+		if account.Sname != nil && strings.HasPrefix(*account.Sname, f.value) {
+			return nil
+		}
+	case "null":
+		if f.value == "0" && account.Sname != nil {
+			return nil
+		} else if f.value == "1" && account.Sname == nil {
+			return nil
+		}
+	}
+
+	return ErrTestFailed
 }

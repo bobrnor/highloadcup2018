@@ -1,21 +1,29 @@
 package filtering
 
-import "github.com/pkg/errors"
+import (
+	"github.com/bobrnor/highloadcup2018/pkg/account"
+	"github.com/pkg/errors"
+)
 
 type sexFilter struct {
-	Field     string
-	Operation string
-	Value     string
+	operation string
+	value     string
 }
 
-func makeSexFilter(field, operation, value string) (Filter, error) {
+func makeSexFilter(operation, value string) (Filter, error) {
 	if value != "m" && value != "f" {
 		return nil, errors.New("bad filter value")
 	}
 
 	return sexFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     value,
+		operation: operation,
+		value:     value,
 	}, nil
+}
+
+func (f sexFilter) Test(account account.Account) error {
+	if account.Sex == f.value {
+		return nil
+	}
+	return ErrTestFailed
 }

@@ -4,16 +4,17 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/bobrnor/highloadcup2018/pkg/account"
+
 	"github.com/pkg/errors"
 )
 
 type likesFilter struct {
-	Field     string
-	Operation string
-	Value     []int64
+	operation string
+	value     []int64
 }
 
-func makeLikesFilter(field, operation, value string) (Filter, error) {
+func makeLikesFilter(operation, value string) (Filter, error) {
 	var intValues []int64
 
 	vv := strings.Split(value, ",")
@@ -27,8 +28,29 @@ func makeLikesFilter(field, operation, value string) (Filter, error) {
 	}
 
 	return likesFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     intValues,
+		operation: operation,
+		value:     intValues,
 	}, nil
+}
+
+func (f likesFilter) Test(account account.Account) error {
+	if len(account.Likes) == 0 {
+		return ErrTestFailed
+	}
+
+	for _, v := range f.value {
+		found := false
+		for _, l := range account.Likes {
+			if v == l.ID {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			return ErrTestFailed
+		}
+	}
+
+	return nil
 }

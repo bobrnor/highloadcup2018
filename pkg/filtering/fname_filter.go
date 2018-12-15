@@ -1,33 +1,64 @@
 package filtering
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/bobrnor/highloadcup2018/pkg/account"
+)
 
 type fnameFilter struct {
-	Field     string
-	Operation string
-	Value     string
+	operation string
+	value     string
+}
+
+func makeFnameFilter(operation, value string) (Filter, error) {
+	return fnameFilter{
+		operation: operation,
+		value:     value,
+	}, nil
+}
+
+func (f fnameFilter) Test(account account.Account) error {
+	switch f.operation {
+	case "eq":
+		if account.Fname != nil && strings.EqualFold(*account.Fname, f.value) {
+			return nil
+		}
+	case "null":
+		if f.value == "0" && account.Fname != nil {
+			return nil
+		} else if f.value == "1" && account.Fname == nil {
+			return nil
+		}
+	}
+
+	return ErrTestFailed
 }
 
 type fnameAnyFilter struct {
-	Field     string
-	Operation string
-	Value     []string
+	operation string
+	value     []string
 }
 
-func makeFnameFilter(field, operation, value string) (Filter, error) {
-	return fnameFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     value,
-	}, nil
-}
-
-func makeFnameAnyFilter(field, operation, value string) (Filter, error) {
+func makeFnameAnyFilter(operation, value string) (Filter, error) {
 	values := strings.Split(value, ",")
 
 	return fnameAnyFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     values,
+		operation: operation,
+		value:     values,
 	}, nil
+}
+
+func (f fnameAnyFilter) Test(account account.Account) error {
+	if account.Fname == nil {
+		return ErrTestFailed
+	}
+
+	for _, v := range f.value {
+		if strings.EqualFold(*account.Fname, v) {
+			return nil
+		}
+	}
+
+	return ErrTestFailed
 }

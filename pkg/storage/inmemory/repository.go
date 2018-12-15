@@ -1,15 +1,16 @@
 package inmemory
 
 import (
+	"github.com/bobrnor/highloadcup2018/pkg/account"
 	"github.com/bobrnor/highloadcup2018/pkg/filtering"
 	"github.com/pkg/errors"
 )
 
 type Storage struct {
-	accounts Accounts
+	accounts account.Accounts
 }
 
-func New(accounts Accounts) *Storage {
+func New(accounts account.Accounts) *Storage {
 	return &Storage{
 		accounts: accounts,
 	}

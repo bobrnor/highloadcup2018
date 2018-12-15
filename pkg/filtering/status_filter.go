@@ -1,15 +1,34 @@
 package filtering
 
+import (
+	"strings"
+
+	"github.com/bobrnor/highloadcup2018/pkg/account"
+)
+
 type statusFilter struct {
-	Field     string
-	Operation string
-	Value     string
+	operation string
+	value     string
 }
 
-func makeStatusFilter(field, operation, value string) (Filter, error) {
+func makeStatusFilter(operation, value string) (Filter, error) {
 	return statusFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     value,
+		operation: operation,
+		value:     value,
 	}, nil
+}
+
+func (f statusFilter) Test(account account.Account) error {
+	switch f.operation {
+	case "eq":
+		if strings.EqualFold(account.Status, f.value) {
+			return nil
+		}
+	case "neq":
+		if !strings.EqualFold(account.Status, f.value) {
+			return nil
+		}
+	}
+
+	return ErrTestFailed
 }

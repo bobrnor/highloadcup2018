@@ -23,5 +23,5 @@ type Account struct {
 	Birth     int64    `json:"birth,omitempty"`
 	Interests []string `json:"interests,omitempty"`
 	Likes     []Likes  `json:"likes,omitempty"`
-	Premium   Premium  `json:"premium,omitempty"`
+	Premium   *Premium `json:"premium,omitempty"`
 }

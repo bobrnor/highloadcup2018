@@ -1,17 +1,27 @@
 package filtering
 
 import (
+	"fmt"
 	"strings"
+
+	"github.com/bobrnor/highloadcup2018/pkg/account"
 
 	"github.com/pkg/errors"
 )
 
-type filterMakeFunc func(string, string, string) (Filter, error)
+type filterMakeFunc func(string, string) (Filter, error)
+
+var ErrTestFailed = fmt.Errorf("filter test failed")
 
 type Filter interface {
+	Test(account account.Account) error
 }
 
 type noFilter struct{}
+
+func (f noFilter) Test(_ account.Account) error {
+	return ErrTestFailed
+}
 
 var filterMakeFuncs = map[string]map[string]filterMakeFunc{
 	"sex": {
@@ -78,7 +88,7 @@ func Make(key, value string) (Filter, error) {
 		return noFilter{}, errors.New("filter not found")
 	}
 
-	return f(field, operation, value)
+	return f(operation, value)
 }
 
 func split(key string) (string, string, error) {

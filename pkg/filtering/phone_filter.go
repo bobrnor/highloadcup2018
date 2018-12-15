@@ -1,15 +1,36 @@
 package filtering
 
+import (
+	"strings"
+
+	"github.com/bobrnor/highloadcup2018/pkg/account"
+)
+
 type phoneFilter struct {
-	Field     string
-	Operation string
-	Value     string
+	operation string
+	value     string
 }
 
-func makePhoneFilter(field, operation, value string) (Filter, error) {
+func makePhoneFilter(operation, value string) (Filter, error) {
 	return phoneFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     value,
+		operation: operation,
+		value:     value,
 	}, nil
+}
+
+func (f phoneFilter) Test(account account.Account) error {
+	switch f.operation {
+	case "code":
+		if account.Phone != nil && strings.Contains(*account.Phone, "("+f.value+")") {
+			return nil
+		}
+	case "null":
+		if f.value == "0" && account.Phone != nil {
+			return nil
+		} else if f.value == "1" && account.Phone == nil {
+			return nil
+		}
+	}
+
+	return ErrTestFailed
 }

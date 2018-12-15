@@ -1,15 +1,36 @@
 package filtering
 
+import (
+	"time"
+
+	"github.com/bobrnor/highloadcup2018/pkg/account"
+)
+
 type premiumFilter struct {
-	Field     string
-	Operation string
-	Value     string
+	operation string
+	value     string
 }
 
-func makePremiumFilter(field, operation, value string) (Filter, error) {
+func makePremiumFilter(operation, value string) (Filter, error) {
 	return premiumFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     value,
+		operation: operation,
+		value:     value,
 	}, nil
+}
+
+func (f premiumFilter) Test(account account.Account) error {
+	switch f.operation {
+	case "now":
+		if account.Premium != nil && account.Premium.Start >= time.Now().Unix() && account.Premium.Finish < time.Now().Unix() {
+			return nil
+		}
+	case "null":
+		if f.value == "0" && account.Premium != nil {
+			return nil
+		} else if f.value == "1" && account.Premium == nil {
+			return nil
+		}
+	}
+
+	return ErrTestFailed
 }

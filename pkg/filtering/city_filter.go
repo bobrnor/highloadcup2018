@@ -1,33 +1,67 @@
 package filtering
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/bobrnor/highloadcup2018/pkg/account"
+)
 
 type cityFilter struct {
-	Field     string
-	Operation string
-	Value     string
+	operation string
+	value     string
+}
+
+func makeCityFilter(operation, value string) (Filter, error) {
+	return cityFilter{
+		operation: operation,
+		value:     value,
+	}, nil
+}
+
+func (f cityFilter) Test(account account.Account) error {
+	switch f.operation {
+	case "eq":
+		if account.City != nil && strings.EqualFold(*account.City, f.value) {
+			return nil
+		}
+	case "null":
+		if f.value == "0" && account.City != nil {
+			return nil
+		} else if f.value == "1" && account.City == nil {
+			return nil
+		}
+	}
+
+	return ErrTestFailed
 }
 
 type cityAnyFilter struct {
-	Field     string
-	Operation string
-	Value     []string
+	operation string
+	value     []string
 }
 
-func makeCityFilter(field, operation, value string) (Filter, error) {
-	return cityFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     value,
-	}, nil
-}
-
-func makeCityAnyFilter(field, operation, value string) (Filter, error) {
+func makeCityAnyFilter(operation, value string) (Filter, error) {
 	values := strings.Split(value, ",")
 
 	return cityAnyFilter{
-		Field:     field,
-		Operation: operation,
-		Value:     values,
+		operation: operation,
+		value:     values,
 	}, nil
+}
+
+func (f cityAnyFilter) Test(account account.Account) error {
+	if account.City == nil {
+		return ErrTestFailed
+	}
+
+	switch f.operation {
+	case "any":
+		for _, city := range f.value {
+			if strings.EqualFold(*account.City, city) {
+				return nil
+			}
+		}
+	}
+
+	return ErrTestFailed
 }
