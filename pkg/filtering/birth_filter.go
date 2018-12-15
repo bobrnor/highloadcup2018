@@ -43,3 +43,7 @@ func (f birthFilter) Test(account account.Account) error {
 
 	return ErrTestFailed
 }
+
+func (f birthFilter) Fill(src account.Account, dst map[string]interface{}) {
+	dst["birth"] = src.Birth
+}

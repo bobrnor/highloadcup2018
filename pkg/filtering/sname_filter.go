@@ -38,3 +38,7 @@ func (f snameFilter) Test(account account.Account) error {
 
 	return ErrTestFailed
 }
+
+func (f snameFilter) Fill(src account.Account, dst map[string]interface{}) {
+	dst["sname"] = src.Sname
+}

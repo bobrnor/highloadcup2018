@@ -11,7 +11,7 @@ import (
 )
 
 type response struct {
-	accounts []filtering.Account `json:"accounts"`
+	Accounts []map[string]interface{} `json:"accounts"`
 }
 
 func New(f filtering.Service) http.Handler {
@@ -31,6 +31,10 @@ func filter(f filtering.Service) func(w http.ResponseWriter, r *http.Request, _ 
 		var limit int
 		var filters []filtering.Filter
 		for key, value := range r.Form {
+			if key == "query_id" {
+				continue
+			}
+
 			if key == "limit" {
 				l, err := strconv.Atoi(value[0])
 				if err != nil {
@@ -53,7 +57,24 @@ func filter(f filtering.Service) func(w http.ResponseWriter, r *http.Request, _ 
 			panic(err.Error())
 		}
 
-		if err := json.NewEncoder(w).Encode(response{accounts: accounts}); err != nil {
+		resp := response{
+			Accounts: make([]map[string]interface{}, 0, len(accounts)),
+		}
+
+		for _, acc := range accounts {
+			accountMap := map[string]interface{}{
+				"id":    acc.ID,
+				"email": acc.Email,
+			}
+
+			for _, f := range filters {
+				f.Fill(acc, accountMap)
+			}
+
+			resp.Accounts = append(resp.Accounts, accountMap)
+		}
+
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
 			panic(err.Error())
 		}
 	}

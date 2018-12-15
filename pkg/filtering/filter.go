@@ -15,6 +15,7 @@ var ErrTestFailed = fmt.Errorf("filter test failed")
 
 type Filter interface {
 	Test(account account.Account) error
+	Fill(src account.Account, dst map[string]interface{})
 }
 
 type noFilter struct{}
@@ -22,6 +23,8 @@ type noFilter struct{}
 func (f noFilter) Test(_ account.Account) error {
 	return ErrTestFailed
 }
+
+func (f noFilter) Fill(src account.Account, dst map[string]interface{}) {}
 
 var filterMakeFuncs = map[string]map[string]filterMakeFunc{
 	"sex": {

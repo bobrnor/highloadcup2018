@@ -27,3 +27,7 @@ func (f sexFilter) Test(account account.Account) error {
 	}
 	return ErrTestFailed
 }
+
+func (f sexFilter) Fill(src account.Account, dst map[string]interface{}) {
+	dst["sex"] = src.Sex
+}

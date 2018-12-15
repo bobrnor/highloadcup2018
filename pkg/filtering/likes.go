@@ -54,3 +54,7 @@ func (f likesFilter) Test(account account.Account) error {
 
 	return nil
 }
+
+func (f likesFilter) Fill(src account.Account, dst map[string]interface{}) {
+	dst["likes"] = src.Likes
+}

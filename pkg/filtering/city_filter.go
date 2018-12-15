@@ -35,6 +35,10 @@ func (f cityFilter) Test(account account.Account) error {
 	return ErrTestFailed
 }
 
+func (f cityFilter) Fill(src account.Account, dst map[string]interface{}) {
+	dst["city"] = src.City
+}
+
 type cityAnyFilter struct {
 	operation string
 	value     []string
@@ -64,4 +68,8 @@ func (f cityAnyFilter) Test(account account.Account) error {
 	}
 
 	return ErrTestFailed
+}
+
+func (f cityAnyFilter) Fill(src account.Account, dst map[string]interface{}) {
+	dst["city"] = src.City
 }
